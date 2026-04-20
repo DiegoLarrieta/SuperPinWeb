@@ -1,0 +1,65 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root,
+main {
+  min-height: 100vh;
+}
+
+:root {
+  --lime: #CAFF00;
+  --black: #000;
+  --white: #fff;
+  --dark: #0f0f0f;
+  --card-bg: #111;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #CAFF00; border-radius: 2px; }
+
+/* Text selection */
+::selection { background: #CAFF00; color: #000; }
+
+button {
+  font-family: inherit;
+}
+
+/* ── Animations ─────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%,  100% { transform: translateX(-50%) translateY(0); }
+  50%        { transform: translateX(-50%) translateY(8px); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ── Responsive helpers ─────────────────────────── */
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+}
