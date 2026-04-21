@@ -66,7 +66,7 @@ export const PRODUCT_DATA: Record<string, Product> = {
     badgeTextColor: '#CAFF00',
     badgeBorder: '1px solid #CAFF00',
     images: [
-      '/assets/product-9.5-main.png',
+      '/assets/product-9.5-pack.jpg',
       '/assets/product-9.5-elite.jpg',
       '/assets/product-9.5-box.jpg',
     ],
@@ -100,6 +100,7 @@ export const PRODUCT_DATA: Record<string, Product> = {
     specs: [
       { label: 'Diámetro', value: '9.5 mm' },
       { label: 'Largo', value: '15 cm' },
+      { label: 'Peso', value: '94 g por pieza' },
       { label: 'Piezas incluidas', value: '2 SuperPins + bolsa' },
       { label: 'Material', value: 'Acero alta resistencia + polímero técnico' },
       { label: 'Compatibilidad', value: 'Máquinas con placas grandes' },

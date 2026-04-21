@@ -6,9 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { PRODUCT_DATA } from '@/data/products';
 
-// ── Scroll animation frames (21 frames from product video) ───────────────────
-const VIDEO_FRAMES: string[] = Array.from({ length: 21 }, (_, i) =>
-  `/assets/frames/f${String(i).padStart(2, '0')}.jpg`
+const HERO_FRAMES: string[] = Array.from({ length: 100 }, (_, i) =>
+  `/assets/hero-frames/f${String(i + 1).padStart(3, '0')}.jpg`
 );
 
 interface Chapter {
@@ -17,8 +16,6 @@ interface Chapter {
   sub: string;
   tag?: string;
   cta?: string;
-  transform: string;
-  imgOpacity: number;
 }
 
 const CHAPTERS: Chapter[] = [
@@ -26,32 +23,24 @@ const CHAPTERS: Chapter[] = [
     progress: [0, 0.25],
     headline: 'Dropsets.\nSin parar.',
     sub: 'SuperPin cambia el peso de tus máquinas automáticamente — en menos de 2 segundos.',
-    transform: 'scale(1) rotateY(0deg)',
-    imgOpacity: 1,
   },
   {
     progress: [0.25, 0.5],
     headline: 'Kit de\n2 piezas.',
     sub: 'Cada pack incluye 2 SuperPins — para dropsets de 3 niveles sin interrupciones desde el día uno.',
     tag: '✓ Incluye 2 piezas + bolsa',
-    transform: 'scale(1.06) rotateY(-5deg)',
-    imgOpacity: 1,
   },
   {
     progress: [0.5, 0.75],
     headline: 'Elige tu\nmodelo.',
     sub: 'SuperPin 7.6mm para la mayoría de máquinas. SuperPin 9.5mm para cargas pesadas.',
     tag: '★★★★★  228 reseñas verificadas',
-    transform: 'scale(1.06) rotateY(5deg)',
-    imgOpacity: 1,
   },
   {
     progress: [0.75, 1],
     headline: '$799 MXN.\nEnvío gratis.',
     sub: 'Entrega en 3–5 días hábiles. Paga con tarjeta, MercadoPago o WhatsApp.',
     cta: 'VER MODELOS',
-    transform: 'scale(0.98) rotateY(0deg)',
-    imgOpacity: 0.95,
   },
 ];
 
@@ -61,11 +50,12 @@ function ScrollHero() {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const [chapter, setChapter] = useState(0);
-  const [imgSrc, setImgSrc] = useState(VIDEO_FRAMES[0]);
+  const [frameSrc, setFrameSrc] = useState(HERO_FRAMES[0]);
   const router = useRouter();
 
   useEffect(() => {
-    VIDEO_FRAMES.forEach(src => {
+    // Preload all frames so swaps are instant
+    HERO_FRAMES.forEach(src => {
       const img = new Image();
       img.src = src;
     });
@@ -79,23 +69,14 @@ function ScrollHero() {
         const scrolled = -rect.top;
         const progress = Math.max(0, Math.min(1, scrolled / totalHeight));
 
+        const fi = Math.min(HERO_FRAMES.length - 1, Math.floor(progress * HERO_FRAMES.length));
+        setFrameSrc(HERO_FRAMES[fi]);
+
         let cIdx = 0;
         for (let i = 0; i < CHAPTERS.length; i++) {
           if (progress >= CHAPTERS[i].progress[0]) cIdx = i;
         }
-        const c = CHAPTERS[cIdx];
-        const cStart = c.progress[0];
-        const cEnd = c.progress[1];
-        const cp = Math.max(0, Math.min(1, (progress - cStart) / (cEnd - cStart)));
-
         setChapter(cIdx);
-
-        const fi = Math.min(VIDEO_FRAMES.length - 1, Math.floor(cp * VIDEO_FRAMES.length));
-        setImgSrc(VIDEO_FRAMES[fi]);
-
-        if (imgRef.current) {
-          imgRef.current.style.transform = `perspective(800px) ${c.transform}`;
-        }
       });
     };
 
@@ -121,8 +102,10 @@ function ScrollHero() {
           overflow: 'hidden',
           background: '#000',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
+          paddingTop: '7vh',
         }}
       >
         {/* Background glow */}
@@ -130,13 +113,7 @@ function ScrollHero() {
           style={{
             position: 'absolute',
             inset: 0,
-            background:
-              chapter === 1
-                ? 'radial-gradient(ellipse 60% 60% at 30% 60%, rgba(202,255,0,0.06) 0%, transparent 70%)'
-                : chapter === 2
-                ? 'radial-gradient(ellipse 60% 60% at 70% 60%, rgba(202,255,0,0.06) 0%, transparent 70%)'
-                : 'radial-gradient(ellipse 60% 60% at 50% 60%, rgba(202,255,0,0.04) 0%, transparent 70%)',
-            transition: 'background 1s ease',
+            background: 'radial-gradient(ellipse 80% 60% at 50% 85%, rgba(202,255,0,0.05) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
           aria-hidden="true"
@@ -147,7 +124,7 @@ function ScrollHero() {
           style={{
             position: 'absolute',
             inset: 0,
-            opacity: 0.03,
+            opacity: 0.025,
             backgroundImage:
               'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
             backgroundSize: '80px 80px',
@@ -156,144 +133,136 @@ function ScrollHero() {
           aria-hidden="true"
         />
 
-        {/* Two-column layout */}
+        {/* Centered text block */}
         <div
+          key={chapter}
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 80,
-            maxWidth: 1100,
-            width: '100%',
-            padding: '0 60px',
-            alignItems: 'center',
             position: 'relative',
             zIndex: 1,
+            textAlign: 'center',
+            animation: 'fadeUp 0.45s ease forwards',
+            padding: '0 24px',
+            maxWidth: 680,
+            width: '100%',
           }}
         >
-          {/* Text side */}
-          <div key={chapter} style={{ animation: 'fadeUp 0.5s ease forwards' }}>
-            {c.tag && (
-              <p
-                style={{
-                  fontSize: 13,
-                  color: '#CAFF00',
-                  fontWeight: 600,
-                  letterSpacing: '0.06em',
-                  marginBottom: 20,
-                  opacity: 0.9,
-                }}
-              >
-                {c.tag}
-              </p>
-            )}
-            <h1
+          {c.tag && (
+            <p
               style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(52px, 7vw, 88px)',
-                letterSpacing: '0.04em',
-                lineHeight: 1.0,
-                color: '#fff',
-                margin: '0 0 24px',
+                fontSize: 12,
+                color: '#CAFF00',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                marginBottom: 14,
                 textTransform: 'uppercase',
               }}
             >
-              {lines.map((l, i) => (
-                <span key={i} style={{ display: 'block' }}>
-                  {l}
-                </span>
-              ))}
-            </h1>
-            <p
-              style={{
-                fontSize: 18,
-                color: 'rgba(255,255,255,0.58)',
-                lineHeight: 1.65,
-                maxWidth: 380,
-                marginBottom: 36,
-              }}
-            >
-              {c.sub}
+              {c.tag}
             </p>
-
-            {c.cta && (
-              <button
-                onClick={() => {
-                  const el = document.getElementById('products');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  else router.push('/#products');
-                }}
-                style={{
-                  background: '#CAFF00',
-                  color: '#000',
-                  border: 'none',
-                  padding: '16px 36px',
-                  fontSize: 14,
-                  fontWeight: 800,
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-body)',
-                  letterSpacing: '0.08em',
-                  transition: 'opacity 0.2s',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-              >
-                {c.cta}
-              </button>
-            )}
-
-            {/* Chapter dots */}
-            <div
-              style={{ display: 'flex', gap: 8, marginTop: 40 }}
-              role="tablist"
-              aria-label="Sección actual"
-            >
-              {CHAPTERS.map((_, i) => (
-                <div
-                  key={i}
-                  role="tab"
-                  aria-selected={i === chapter}
-                  aria-label={`Sección ${i + 1}`}
-                  style={{
-                    width: i === chapter ? 24 : 6,
-                    height: 6,
-                    borderRadius: 3,
-                    background: i === chapter ? '#CAFF00' : 'rgba(255,255,255,0.15)',
-                    transition: 'all 0.4s',
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Product image */}
-          <div
+          )}
+          <h1
             style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 480,
-              background: '#f5f4f2',
-              position: 'relative',
-              overflow: 'hidden',
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(50px, 7vw, 84px)',
+              letterSpacing: '0.04em',
+              lineHeight: 1.0,
+              color: '#fff',
+              margin: '0 0 18px',
+              textTransform: 'uppercase',
             }}
           >
-            <img
-              ref={imgRef}
-              src={imgSrc}
-              alt={`SuperPin — ${c.headline.replace('\n', ' ')}`}
-              style={{
-                maxWidth: '88%',
-                maxHeight: '88%',
-                objectFit: 'contain',
-                transition: 'opacity 0.1s ease',
-                opacity: c.imgOpacity,
-                willChange: 'transform, opacity',
-                position: 'relative',
-                zIndex: 1,
+            {lines.map((l, i) => (
+              <span key={i} style={{ display: 'block' }}>
+                {l}
+              </span>
+            ))}
+          </h1>
+          <p
+            style={{
+              fontSize: 17,
+              color: 'rgba(255,255,255,0.5)',
+              lineHeight: 1.65,
+              marginBottom: c.cta ? 28 : 0,
+            }}
+          >
+            {c.sub}
+          </p>
+
+          {c.cta && (
+            <button
+              onClick={() => {
+                const el = document.getElementById('products');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else router.push('/#products');
               }}
-            />
+              style={{
+                background: '#CAFF00',
+                color: '#000',
+                border: 'none',
+                padding: '14px 36px',
+                fontSize: 14,
+                fontWeight: 800,
+                borderRadius: 4,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+                letterSpacing: '0.08em',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >
+              {c.cta}
+            </button>
+          )}
+
+          {/* Chapter dots */}
+          <div
+            style={{ display: 'flex', gap: 8, marginTop: 24, justifyContent: 'center' }}
+            role="tablist"
+            aria-label="Sección actual"
+          >
+            {CHAPTERS.map((_, i) => (
+              <div
+                key={i}
+                role="tab"
+                aria-selected={i === chapter}
+                aria-label={`Sección ${i + 1}`}
+                style={{
+                  width: i === chapter ? 24 : 6,
+                  height: 6,
+                  borderRadius: 3,
+                  background: i === chapter ? '#CAFF00' : 'rgba(255,255,255,0.15)',
+                  transition: 'all 0.4s',
+                }}
+              />
+            ))}
           </div>
+        </div>
+
+        {/* Frame image — Apple-style scroll-scrubbed */}
+        <div
+          style={{
+            flex: 1,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            zIndex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          <img
+            ref={imgRef}
+            src={frameSrc}
+            alt={`SuperPin — ${c.headline.replace('\n', ' ')}`}
+            style={{
+              height: '100%',
+              maxWidth: '100%',
+              objectFit: 'contain',
+              willChange: 'contents',
+            }}
+          />
         </div>
 
         {/* Scroll hint */}
@@ -301,24 +270,23 @@ function ScrollHero() {
           <div
             style={{
               position: 'absolute',
-              bottom: 36,
+              bottom: 28,
               left: '50%',
               transform: 'translateX(-50%)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 8,
-              opacity: 0.4,
+              opacity: 0.35,
               animation: 'bounce 2s ease-in-out infinite',
+              zIndex: 2,
             }}
             aria-hidden="true"
           >
-            <span
-              style={{ fontSize: 11, letterSpacing: '0.12em', color: '#fff', textTransform: 'uppercase' }}
-            >
+            <span style={{ fontSize: 10, letterSpacing: '0.14em', color: '#fff', textTransform: 'uppercase' }}>
               Scroll
             </span>
-            <div style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.3)' }} />
+            <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.3)' }} />
           </div>
         )}
       </div>
@@ -642,7 +610,7 @@ function ComparisonTable() {
     { label: 'Diámetro', v76: '7.6 mm', v95: '9.5 mm' },
     { label: 'Largo', v76: '15 cm', v95: '15 cm' },
     { label: 'Incluye', v76: '2 piezas + bolsa', v95: '2 piezas + bolsa' },
-    { label: 'Peso', v76: '73 g c/u', v95: '—' },
+    { label: 'Peso', v76: '73 g c/u', v95: '94 g c/u' },
     { label: 'Compatibilidad', v76: '95% de las máquinas', v95: 'Máquinas con placas grandes' },
     { label: 'Ideal para', v76: 'Todos los niveles', v95: 'Entrenamiento avanzado' },
     { label: 'Reseñas', v76: '142 reseñas ★★★★★', v95: '86 reseñas ★★★★★' },
