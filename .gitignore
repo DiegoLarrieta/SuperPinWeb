@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+# Cloudflare Pages build output
+/.vercel/
+
 # Production
 /build
 
