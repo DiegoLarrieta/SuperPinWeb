@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { PRODUCT_DATA } from '@/data/products';
+import { useIsMobile } from '@/hooks/useBreakpoint';
 
 const HERO_FRAMES: string[] = Array.from({ length: 100 }, (_, i) =>
   `/assets/hero-frames/f${String(i + 1).padStart(3, '0')}.jpg`
@@ -54,7 +55,6 @@ function ScrollHero() {
   const router = useRouter();
 
   useEffect(() => {
-    // Preload all frames so swaps are instant
     HERO_FRAMES.forEach(src => {
       const img = new Image();
       img.src = src;
@@ -141,7 +141,7 @@ function ScrollHero() {
             zIndex: 1,
             textAlign: 'center',
             animation: 'fadeUp 0.45s ease forwards',
-            padding: '0 24px',
+            padding: '0 20px',
             maxWidth: 680,
             width: '100%',
           }}
@@ -163,7 +163,7 @@ function ScrollHero() {
           <h1
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(50px, 7vw, 84px)',
+              fontSize: 'clamp(44px, 7vw, 84px)',
               letterSpacing: '0.04em',
               lineHeight: 1.0,
               color: '#fff',
@@ -179,7 +179,7 @@ function ScrollHero() {
           </h1>
           <p
             style={{
-              fontSize: 17,
+              fontSize: 'clamp(14px, 2vw, 17px)',
               color: 'rgba(255,255,255,0.5)',
               lineHeight: 1.65,
               marginBottom: c.cta ? 28 : 0,
@@ -239,7 +239,7 @@ function ScrollHero() {
           </div>
         </div>
 
-        {/* Frame image — Apple-style scroll-scrubbed */}
+        {/* Frame image */}
         <div
           style={{
             flex: 1,
@@ -296,6 +296,7 @@ function ScrollHero() {
 
 // ── SocialProofStrip ─────────────────────────────────────────────────────────
 function SocialProofStrip() {
+  const isMobile = useIsMobile();
   const stats = [
     { val: '228+', label: 'Reseñas verificadas' },
     { val: '★ 5.0', label: 'Calificación promedio' },
@@ -311,24 +312,23 @@ function SocialProofStrip() {
         background: '#0f0f0f',
         borderTop: '1px solid rgba(202,255,0,0.1)',
         borderBottom: '1px solid rgba(202,255,0,0.1)',
-        padding: '28px 40px',
+        padding: isMobile ? '24px 20px' : '28px 40px',
       }}
     >
       <dl
         style={{
           maxWidth: 1100,
           margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 24,
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
+          gap: isMobile ? '20px 12px' : 24,
         }}
       >
         {stats.map((s, i) => (
           <div key={i} style={{ textAlign: 'center' }}>
             <dt
               style={{
-                fontSize: 24,
+                fontSize: isMobile ? 18 : 24,
                 fontWeight: 800,
                 color: '#CAFF00',
                 fontFamily: 'var(--font-display)',
@@ -339,10 +339,10 @@ function SocialProofStrip() {
             </dt>
             <dd
               style={{
-                fontSize: 11,
+                fontSize: 10,
                 color: 'rgba(255,255,255,0.4)',
                 textTransform: 'uppercase',
-                letterSpacing: '0.08em',
+                letterSpacing: '0.06em',
                 marginTop: 4,
               }}
             >
@@ -369,7 +369,7 @@ interface GridProduct {
   image: string;
 }
 
-function ProductGridCard({ product }: { product: GridProduct }) {
+function ProductGridCard({ product, isMobile }: { product: GridProduct; isMobile: boolean }) {
   const [hovered, setHovered] = useState(false);
   const { addToCart, setCartOpen } = useCart();
 
@@ -389,14 +389,14 @@ function ProductGridCard({ product }: { product: GridProduct }) {
       style={{
         background: hovered ? '#111' : '#0a0a0a',
         transition: 'background 0.3s',
-        padding: '48px 40px',
+        padding: isMobile ? '32px 24px' : '48px 40px',
         display: 'flex',
         flexDirection: 'column',
         border: '1px solid rgba(255,255,255,0.04)',
       }}
     >
       {/* Badge */}
-      <div style={{ marginBottom: 24 }}>
+      <div style={{ marginBottom: 20 }}>
         <span
           style={{
             background: product.badgeColor,
@@ -415,11 +415,11 @@ function ProductGridCard({ product }: { product: GridProduct }) {
       {/* Image */}
       <div
         style={{
-          height: 260,
+          height: isMobile ? 200 : 260,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: 32,
+          marginBottom: 24,
         }}
       >
         <img
@@ -445,7 +445,7 @@ function ProductGridCard({ product }: { product: GridProduct }) {
       <h3
         style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 36,
+          fontSize: isMobile ? 28 : 36,
           letterSpacing: '0.05em',
           color: '#fff',
           marginBottom: 10,
@@ -455,12 +455,12 @@ function ProductGridCard({ product }: { product: GridProduct }) {
         {product.name}
       </h3>
       <p
-        style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, marginBottom: 28, flex: 1 }}
+        style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, marginBottom: 24, flex: 1 }}
       >
         {product.tagline}
       </p>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <p style={{ fontSize: 28, fontWeight: 800, color: '#CAFF00', margin: 0 }}>
             ${product.price}
@@ -469,14 +469,14 @@ function ProductGridCard({ product }: { product: GridProduct }) {
             MXN · Envío GRATIS
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={handleAdd}
             style={{
               background: '#CAFF00',
               color: '#000',
               border: 'none',
-              padding: '12px 20px',
+              padding: isMobile ? '11px 16px' : '12px 20px',
               fontSize: 13,
               fontWeight: 700,
               cursor: 'pointer',
@@ -495,7 +495,7 @@ function ProductGridCard({ product }: { product: GridProduct }) {
               background: 'none',
               color: '#fff',
               border: '1px solid rgba(255,255,255,0.2)',
-              padding: '12px 20px',
+              padding: isMobile ? '11px 16px' : '12px 20px',
               fontSize: 13,
               fontWeight: 600,
               cursor: 'pointer',
@@ -517,6 +517,7 @@ function ProductGridCard({ product }: { product: GridProduct }) {
 
 // ── ProductGrid ──────────────────────────────────────────────────────────────
 function ProductGrid() {
+  const isMobile = useIsMobile();
   const gridProducts: GridProduct[] = [
     {
       id: 'product-76',
@@ -545,14 +546,16 @@ function ProductGrid() {
   ];
 
   return (
-    <section id="products" style={{ background: '#000', padding: '96px 40px' }} aria-label="Productos">
+    <section id="products" style={{ background: '#000', padding: isMobile ? '60px 20px' : '96px 40px' }} aria-label="Productos">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div
           style={{
-            marginBottom: 56,
+            marginBottom: 40,
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'flex-end',
+            alignItems: isMobile ? 'flex-start' : 'flex-end',
+            gap: isMobile ? 12 : 0,
           }}
         >
           <div>
@@ -571,7 +574,7 @@ function ProductGrid() {
             <h2
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(36px, 5vw, 56px)',
+                fontSize: 'clamp(30px, 5vw, 56px)',
                 letterSpacing: '0.05em',
                 color: '#fff',
                 lineHeight: 1,
@@ -584,19 +587,19 @@ function ProductGrid() {
           </div>
           <p
             style={{
-              fontSize: 16,
+              fontSize: 15,
               color: 'rgba(255,255,255,0.45)',
               maxWidth: 280,
-              textAlign: 'right',
+              textAlign: isMobile ? 'left' : 'right',
               lineHeight: 1.65,
             }}
           >
             Ambos incluyen envío gratis y tecnología de cambio automático de peso.
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 2 }}>
           {gridProducts.map(p => (
-            <ProductGridCard key={p.id} product={p} />
+            <ProductGridCard key={p.id} product={p} isMobile={isMobile} />
           ))}
         </div>
       </div>
@@ -606,6 +609,7 @@ function ProductGrid() {
 
 // ── ComparisonTable ──────────────────────────────────────────────────────────
 function ComparisonTable() {
+  const isMobile = useIsMobile();
   const rows = [
     { label: 'Diámetro', v76: '7.6 mm', v95: '9.5 mm' },
     { label: 'Largo', v76: '15 cm', v95: '15 cm' },
@@ -619,9 +623,9 @@ function ComparisonTable() {
   ];
 
   return (
-    <section style={{ background: '#0a0a0a', padding: '96px 40px' }} aria-label="Comparación de modelos">
+    <section style={{ background: '#0a0a0a', padding: isMobile ? '60px 20px' : '96px 40px' }} aria-label="Comparación de modelos">
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <p
             style={{
               fontSize: 11,
@@ -637,7 +641,7 @@ function ComparisonTable() {
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(32px, 4vw, 48px)',
+              fontSize: 'clamp(26px, 4vw, 48px)',
               letterSpacing: '0.05em',
               color: '#fff',
             }}
@@ -646,87 +650,88 @@ function ComparisonTable() {
           </h2>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid rgba(202,255,0,0.2)' }}>
-              <th style={{ padding: '0 0 16px', textAlign: 'left', width: '33%' }} />
-              <th
-                style={{
-                  padding: '0 0 16px',
-                  textAlign: 'center',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 20,
-                  letterSpacing: '0.08em',
-                  color: '#CAFF00',
-                  fontWeight: 400,
-                }}
-              >
-                7.6mm
-              </th>
-              <th
-                style={{
-                  padding: '0 0 16px',
-                  textAlign: 'center',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 20,
-                  letterSpacing: '0.08em',
-                  color: '#fff',
-                  fontWeight: 400,
-                }}
-              >
-                9.5mm
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, i) => (
-              <tr
-                key={i}
-                style={{
-                  borderBottom: '1px solid rgba(255,255,255,0.05)',
-                  background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
-                }}
-              >
-                <td
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? 300 : 'auto' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(202,255,0,0.2)' }}>
+                <th style={{ padding: '0 0 16px', textAlign: 'left', width: '33%' }} />
+                <th
                   style={{
-                    padding: '16px 0',
-                    fontSize: 13,
-                    color: 'rgba(255,255,255,0.4)',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  {row.label}
-                </td>
-                <td
-                  style={{ textAlign: 'center', fontSize: 14, color: '#CAFF00', fontWeight: 500, padding: '16px 0' }}
-                >
-                  {row.v76}
-                </td>
-                <td
-                  style={{
+                    padding: '0 0 16px',
                     textAlign: 'center',
-                    fontSize: 14,
-                    color: 'rgba(255,255,255,0.75)',
-                    fontWeight: 500,
-                    padding: '16px 0',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: isMobile ? 16 : 20,
+                    letterSpacing: '0.08em',
+                    color: '#CAFF00',
+                    fontWeight: 400,
                   }}
                 >
-                  {row.v95}
-                </td>
+                  7.6mm
+                </th>
+                <th
+                  style={{
+                    padding: '0 0 16px',
+                    textAlign: 'center',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: isMobile ? 16 : 20,
+                    letterSpacing: '0.08em',
+                    color: '#fff',
+                    fontWeight: 400,
+                  }}
+                >
+                  9.5mm
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr
+                  key={i}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: '14px 0',
+                      fontSize: isMobile ? 11 : 13,
+                      color: 'rgba(255,255,255,0.4)',
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    {row.label}
+                  </td>
+                  <td
+                    style={{ textAlign: 'center', fontSize: isMobile ? 12 : 14, color: '#CAFF00', fontWeight: 500, padding: '14px 4px' }}
+                  >
+                    {row.v76}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      fontSize: isMobile ? 12 : 14,
+                      color: 'rgba(255,255,255,0.75)',
+                      fontWeight: 500,
+                      padding: '14px 4px',
+                    }}
+                  >
+                    {row.v95}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
-            marginTop: 32,
+            gridTemplateColumns: '1fr 1fr',
+            marginTop: 28,
             gap: 12,
-            paddingLeft: '33.33%',
           }}
         >
           <Link
@@ -736,7 +741,7 @@ function ComparisonTable() {
               color: '#000',
               border: 'none',
               padding: '14px',
-              fontSize: 13,
+              fontSize: isMobile ? 12 : 13,
               fontWeight: 800,
               cursor: 'pointer',
               fontFamily: 'var(--font-body)',
@@ -755,7 +760,7 @@ function ComparisonTable() {
               color: '#fff',
               border: '1px solid rgba(255,255,255,0.15)',
               padding: '14px',
-              fontSize: 13,
+              fontSize: isMobile ? 12 : 13,
               fontWeight: 700,
               cursor: 'pointer',
               fontFamily: 'var(--font-body)',
@@ -775,6 +780,7 @@ function ComparisonTable() {
 
 // ── ReviewsStrip ─────────────────────────────────────────────────────────────
 function ReviewsStrip() {
+  const isMobile = useIsMobile();
   const reviews = [
     {
       name: 'Carlos M.',
@@ -799,20 +805,22 @@ function ReviewsStrip() {
   ];
 
   return (
-    <section style={{ background: '#000', padding: '80px 40px' }} aria-label="Reseñas de clientes">
+    <section style={{ background: '#000', padding: isMobile ? '60px 20px' : '80px 40px' }} aria-label="Reseñas de clientes">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div
           style={{
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 40,
+            alignItems: isMobile ? 'flex-start' : 'center',
+            marginBottom: 32,
+            gap: isMobile ? 8 : 0,
           }}
         >
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 36,
+              fontSize: isMobile ? 28 : 36,
               letterSpacing: '0.06em',
               color: '#fff',
             }}
@@ -820,35 +828,35 @@ function ReviewsStrip() {
             LO QUE DICEN
           </h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ color: '#CAFF00', fontSize: 20 }} aria-label="5 estrellas">
+            <span style={{ color: '#CAFF00', fontSize: 18 }} aria-label="5 estrellas">
               ★★★★★
             </span>
             <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>5.0 · 228 reseñas</span>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 2 }}>
           {reviews.map((r, i) => (
             <article
               key={i}
               style={{
                 background: '#0f0f0f',
-                padding: '28px 24px',
+                padding: isMobile ? '20px 16px' : '28px 24px',
                 border: '1px solid rgba(255,255,255,0.05)',
               }}
             >
               <p
-                style={{ color: '#CAFF00', fontSize: 13, marginBottom: 14 }}
+                style={{ color: '#CAFF00', fontSize: 13, marginBottom: 12 }}
                 aria-label="5 estrellas"
               >
                 ★★★★★
               </p>
               <blockquote
                 style={{
-                  fontSize: 14,
+                  fontSize: isMobile ? 13 : 14,
                   color: 'rgba(255,255,255,0.65)',
                   lineHeight: 1.7,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   fontStyle: 'normal',
                 }}
               >
@@ -870,28 +878,30 @@ function ReviewsStrip() {
 
 // ── CTABanner ────────────────────────────────────────────────────────────────
 function CTABanner() {
+  const isMobile = useIsMobile();
+
   return (
     <section
-      style={{ background: '#CAFF00', padding: '80px 40px', textAlign: 'center' }}
+      style={{ background: '#CAFF00', padding: isMobile ? '60px 20px' : '80px 40px', textAlign: 'center' }}
       aria-label="Llamada a la acción"
     >
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
         <p
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(40px, 6vw, 72px)',
+            fontSize: 'clamp(36px, 6vw, 72px)',
             letterSpacing: '0.05em',
             color: '#000',
             lineHeight: 1,
-            marginBottom: 20,
+            marginBottom: 16,
           }}
         >
           EMPIEZA HOY.
         </p>
-        <p style={{ fontSize: 18, color: 'rgba(0,0,0,0.6)', marginBottom: 36, lineHeight: 1.6 }}>
+        <p style={{ fontSize: isMobile ? 16 : 18, color: 'rgba(0,0,0,0.6)', marginBottom: 32, lineHeight: 1.6 }}>
           $799 MXN · Envío GRATIS · Entrega 3–5 días
         </p>
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 12, justifyContent: 'center', alignItems: 'center' }}>
           <Link
             href="/superpin-76mm"
             style={{
@@ -906,7 +916,9 @@ function CTABanner() {
               letterSpacing: '0.08em',
               textDecoration: 'none',
               transition: 'opacity 0.2s',
-              display: 'inline-block',
+              display: 'block',
+              width: isMobile ? '100%' : 'auto',
+              textAlign: 'center',
             }}
             onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
             onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -927,7 +939,9 @@ function CTABanner() {
               letterSpacing: '0.08em',
               textDecoration: 'none',
               transition: 'border-color 0.2s',
-              display: 'inline-block',
+              display: 'block',
+              width: isMobile ? '100%' : 'auto',
+              textAlign: 'center',
             }}
             onMouseEnter={e => (e.currentTarget.style.borderColor = '#000')}
             onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.3)')}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useBreakpoint';
 
 const steps = [
   {
@@ -73,7 +74,7 @@ function FAQItem({ faq, isLast }: { faq: { q: string; a: string }; isLast: boole
           background: 'none',
           border: 'none',
           color: '#fff',
-          padding: '22px 0',
+          padding: '20px 0',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -84,11 +85,11 @@ function FAQItem({ faq, isLast }: { faq: { q: string; a: string }; isLast: boole
       >
         <span
           style={{
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: 600,
             color: open ? '#CAFF00' : '#fff',
             transition: 'color 0.2s',
-            paddingRight: 24,
+            paddingRight: 20,
           }}
         >
           {faq.q}
@@ -108,8 +109,8 @@ function FAQItem({ faq, isLast }: { faq: { q: string; a: string }; isLast: boole
         </span>
       </button>
       {open && (
-        <div style={{ paddingBottom: 22, paddingRight: 40 }}>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.75, margin: 0 }}>
+        <div style={{ paddingBottom: 20, paddingRight: 32 }}>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.75, margin: 0 }}>
             {faq.a}
           </p>
         </div>
@@ -119,6 +120,8 @@ function FAQItem({ faq, isLast }: { faq: { q: string; a: string }; isLast: boole
 }
 
 export default function HowToPageContent() {
+  const isMobile = useIsMobile();
+
   return (
     <div style={{ background: '#000', minHeight: '100vh', paddingTop: 64 }}>
 
@@ -126,7 +129,7 @@ export default function HowToPageContent() {
       <section
         style={{
           background: '#0a0a0a',
-          padding: '80px 40px',
+          padding: isMobile ? '48px 20px' : '80px 40px',
           borderBottom: '1px solid rgba(202,255,0,0.08)',
         }}
         aria-label="Encabezado"
@@ -147,7 +150,7 @@ export default function HowToPageContent() {
           <h1
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(40px, 6vw, 72px)',
+              fontSize: 'clamp(32px, 6vw, 72px)',
               letterSpacing: '0.06em',
               color: '#fff',
               lineHeight: 1,
@@ -156,14 +159,14 @@ export default function HowToPageContent() {
           >
             CÓMO USAR EL SUPERPIN
           </h1>
-          <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
+          <p style={{ fontSize: isMobile ? 16 : 18, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
             Cuatro pasos. Menos de 10 segundos en aprender. Resultados inmediatos.
           </p>
         </div>
       </section>
 
       {/* Steps */}
-      <section style={{ padding: '96px 40px' }} aria-label="Pasos de uso">
+      <section style={{ padding: isMobile ? '48px 20px' : '96px 40px' }} aria-label="Pasos de uso">
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {steps.map((step, i) => (
@@ -171,10 +174,10 @@ export default function HowToPageContent() {
                 key={i}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '120px 1fr',
-                  gap: 48,
-                  marginBottom: 64,
-                  paddingBottom: 64,
+                  gridTemplateColumns: isMobile ? '1fr' : '120px 1fr',
+                  gap: isMobile ? 12 : 48,
+                  marginBottom: isMobile ? 40 : 64,
+                  paddingBottom: isMobile ? 40 : 64,
                   borderBottom:
                     i < steps.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                   alignItems: 'start',
@@ -184,11 +187,11 @@ export default function HowToPageContent() {
                   aria-hidden="true"
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: 80,
+                    fontSize: isMobile ? 48 : 80,
                     letterSpacing: '-0.02em',
                     color: 'rgba(202,255,0,0.15)',
                     lineHeight: 1,
-                    textAlign: 'right',
+                    textAlign: isMobile ? 'left' : 'right',
                   }}
                 >
                   {step.num}
@@ -197,10 +200,10 @@ export default function HowToPageContent() {
                   <h2
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: 36,
+                      fontSize: isMobile ? 22 : 36,
                       letterSpacing: '0.04em',
                       color: '#fff',
-                      marginBottom: 16,
+                      marginBottom: 14,
                       textTransform: 'uppercase',
                     }}
                   >
@@ -208,21 +211,21 @@ export default function HowToPageContent() {
                   </h2>
                   <p
                     style={{
-                      fontSize: 17,
+                      fontSize: isMobile ? 15 : 17,
                       color: 'rgba(255,255,255,0.65)',
                       lineHeight: 1.7,
-                      marginBottom: 14,
+                      marginBottom: 12,
                     }}
                   >
                     {step.desc}
                   </p>
                   <p
                     style={{
-                      fontSize: 14,
+                      fontSize: 13,
                       color: 'rgba(255,255,255,0.35)',
                       lineHeight: 1.65,
                       borderLeft: '2px solid rgba(202,255,0,0.3)',
-                      paddingLeft: 16,
+                      paddingLeft: 14,
                     }}
                   >
                     {step.detail}
@@ -238,7 +241,7 @@ export default function HowToPageContent() {
       <section
         style={{
           background: '#0a0a0a',
-          padding: '80px 40px',
+          padding: isMobile ? '48px 20px' : '80px 40px',
           borderTop: '1px solid rgba(255,255,255,0.05)',
         }}
         aria-label="Elige tu modelo"
@@ -247,16 +250,16 @@ export default function HowToPageContent() {
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 32,
+              fontSize: isMobile ? 24 : 32,
               letterSpacing: '0.06em',
               color: '#fff',
-              marginBottom: 32,
+              marginBottom: 28,
               textAlign: 'center',
             }}
           >
             ELIGE TU MODELO
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 2 }}>
             {[
               {
                 href: '/superpin-76mm',
@@ -278,12 +281,12 @@ export default function HowToPageContent() {
                 href={p.href}
                 style={{
                   background: '#111',
-                  padding: '40px 32px',
+                  padding: isMobile ? '24px 20px' : '40px 32px',
                   cursor: 'pointer',
                   border: '1px solid rgba(255,255,255,0.04)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 28,
+                  gap: 20,
                   transition: 'background 0.3s',
                   textDecoration: 'none',
                 }}
@@ -294,17 +297,18 @@ export default function HowToPageContent() {
                   src={p.img}
                   alt={`SuperPin ${p.name}`}
                   style={{
-                    width: 80,
-                    height: 80,
+                    width: isMobile ? 60 : 80,
+                    height: isMobile ? 60 : 80,
                     objectFit: 'contain',
                     filter: 'drop-shadow(0 8px 16px rgba(202,255,0,0.1))',
+                    flexShrink: 0,
                   }}
                 />
                 <div>
                   <p
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: 28,
+                      fontSize: isMobile ? 22 : 28,
                       letterSpacing: '0.06em',
                       color: p.color,
                       marginBottom: 4,
@@ -312,8 +316,8 @@ export default function HowToPageContent() {
                   >
                     SuperPin {p.name}
                   </p>
-                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>{p.sub}</p>
-                  <p style={{ fontSize: 13, color: '#CAFF00', marginTop: 10, fontWeight: 600 }}>
+                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>{p.sub}</p>
+                  <p style={{ fontSize: 13, color: '#CAFF00', marginTop: 8, fontWeight: 600 }}>
                     Ver producto →
                   </p>
                 </div>
@@ -324,15 +328,15 @@ export default function HowToPageContent() {
       </section>
 
       {/* FAQ */}
-      <section style={{ background: '#000', padding: '80px 40px' }} aria-label="Preguntas frecuentes">
+      <section style={{ background: '#000', padding: isMobile ? '48px 20px' : '80px 40px' }} aria-label="Preguntas frecuentes">
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 40,
+              fontSize: isMobile ? 28 : 40,
               letterSpacing: '0.06em',
               color: '#fff',
-              marginBottom: 48,
+              marginBottom: 40,
               textAlign: 'center',
             }}
           >
@@ -350,13 +354,13 @@ export default function HowToPageContent() {
       <section
         style={{
           background: '#0a0a0a',
-          padding: '60px 40px',
+          padding: isMobile ? '40px 20px' : '60px 40px',
           borderTop: '1px solid rgba(255,255,255,0.05)',
           textAlign: 'center',
         }}
       >
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.45)', marginBottom: 20 }}>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.45)', marginBottom: 20 }}>
             ¿Tienes más dudas? Estamos aquí.
           </p>
           <a

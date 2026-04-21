@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useBreakpoint';
 
 const SOCIAL_LINKS = [
   { label: 'TikTok', abbr: 'TK', href: 'https://www.tiktok.com/@superpinstore' },
@@ -17,19 +18,32 @@ const PRODUCT_LINKS = [
 const SUPPORT_ITEMS = ['Envíos', 'Devoluciones', 'Preguntas Frecuentes', 'Privacidad'];
 
 export default function Footer() {
+  const isMobile = useIsMobile();
+
   return (
     <footer
-      style={{ background: '#0a0a0a', borderTop: '1px solid rgba(255,255,255,0.06)', padding: '56px 40px 32px' }}
+      style={{
+        background: '#0a0a0a',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        padding: isMobile ? '40px 20px 24px' : '56px 40px 32px',
+      }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 48, marginBottom: 48 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr',
+            gap: isMobile ? 32 : 48,
+            marginBottom: 40,
+          }}
+        >
           {/* Brand */}
           <div>
             <Link href="/" style={{ textDecoration: 'none' }}>
               <p
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 32,
+                  fontSize: isMobile ? 24 : 32,
                   letterSpacing: '0.15em',
                   color: '#fff',
                   marginBottom: 16,

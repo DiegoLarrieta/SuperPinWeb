@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
+import { useIsMobile } from '@/hooks/useBreakpoint';
 
 const PAYMENT_METHODS = [
   { id: 'card', label: 'Tarjeta de crédito / débito', icon: '💳', sub: 'Visa, Mastercard, American Express' },
@@ -74,7 +75,7 @@ function OrderConfirm() {
         justifyContent: 'center',
       }}
     >
-      <div style={{ maxWidth: 560, textAlign: 'center', padding: '60px 40px' }}>
+      <div style={{ maxWidth: 560, textAlign: 'center', padding: '60px 20px' }}>
         <div
           style={{
             width: 80,
@@ -173,12 +174,12 @@ function OrderConfirm() {
 
 export default function CheckoutContent() {
   const { cart, cartTotal } = useCart();
-  const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [payMethod, setPayMethod] = useState('card');
   const [form, setForm] = useState<FormState>({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
   const [cardForm, setCardForm] = useState<CardFormState>({ number: '', expiry: '', cvv: '', name: '' });
   const [loading, setLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleFormChange = (k: keyof FormState, v: string) =>
     setForm(f => ({ ...f, [k]: v }));
@@ -212,10 +213,10 @@ export default function CheckoutContent() {
         style={{
           maxWidth: 1100,
           margin: '0 auto',
-          padding: '48px 40px',
+          padding: isMobile ? '24px 20px' : '48px 40px',
           display: 'grid',
-          gridTemplateColumns: '1fr 380px',
-          gap: 48,
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 380px',
+          gap: isMobile ? 32 : 48,
           alignItems: 'start',
         }}
       >
@@ -226,7 +227,7 @@ export default function CheckoutContent() {
             style={{
               color: 'rgba(255,255,255,0.4)',
               fontSize: 14,
-              marginBottom: 32,
+              marginBottom: 28,
               display: 'flex',
               alignItems: 'center',
               gap: 6,
@@ -237,7 +238,7 @@ export default function CheckoutContent() {
           </Link>
 
           {/* Step indicator */}
-          <nav aria-label="Pasos del checkout" style={{ display: 'flex', gap: 4, marginBottom: 40, alignItems: 'center' }}>
+          <nav aria-label="Pasos del checkout" style={{ display: 'flex', gap: 4, marginBottom: 36, alignItems: 'center' }}>
             {(['Información', 'Pago'] as const).map((s, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4, flex: i < 1 ? 'auto' : 'none' }}>
                 <div
@@ -270,6 +271,7 @@ export default function CheckoutContent() {
                       fontSize: 12,
                       color: step === i + 1 ? '#000' : '#fff',
                       fontWeight: 700,
+                      flexShrink: 0,
                     }}
                   >
                     {step > i + 1 ? '✓' : i + 1}
@@ -294,15 +296,15 @@ export default function CheckoutContent() {
               <h2
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 28,
+                  fontSize: isMobile ? 22 : 28,
                   letterSpacing: '0.06em',
                   color: '#fff',
-                  marginBottom: 32,
+                  marginBottom: 28,
                 }}
               >
                 INFORMACIÓN DE CONTACTO
               </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16, marginBottom: 28 }}>
                 {(
                   [
                     { k: 'name', label: 'Nombre completo', placeholder: 'Juan García', full: true, type: 'text', autoComplete: 'name', required: true },
@@ -313,7 +315,7 @@ export default function CheckoutContent() {
                     { k: 'zip', label: 'Código postal', placeholder: '06600', type: 'text', autoComplete: 'postal-code' },
                   ] as Array<{ k: keyof FormState; label: string; placeholder: string; full?: boolean; type: string; autoComplete?: string; required?: boolean }>
                 ).map(field => (
-                  <div key={field.k} style={{ gridColumn: field.full ? '1 / -1' : 'auto' }}>
+                  <div key={field.k} style={{ gridColumn: (field.full || isMobile) ? '1 / -1' : 'auto' }}>
                     <label htmlFor={`field-${field.k}`} style={labelStyle}>
                       {field.label}
                       {field.required && <span aria-hidden="true"> *</span>}
@@ -348,6 +350,7 @@ export default function CheckoutContent() {
                   letterSpacing: '0.06em',
                   opacity: isStep1Valid ? 1 : 0.4,
                   transition: 'opacity 0.2s',
+                  width: isMobile ? '100%' : 'auto',
                 }}
               >
                 CONTINUAR AL PAGO →
@@ -360,16 +363,16 @@ export default function CheckoutContent() {
               <h2
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 28,
+                  fontSize: isMobile ? 22 : 28,
                   letterSpacing: '0.06em',
                   color: '#fff',
-                  marginBottom: 32,
+                  marginBottom: 28,
                 }}
               >
                 MÉTODO DE PAGO
               </h2>
 
-              <fieldset style={{ border: 'none', padding: 0, marginBottom: 32 }}>
+              <fieldset style={{ border: 'none', padding: 0, marginBottom: 28 }}>
                 <legend style={{ ...labelStyle, marginBottom: 16 }}>Selecciona un método</legend>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {PAYMENT_METHODS.map(pm => (
@@ -396,7 +399,7 @@ export default function CheckoutContent() {
                       />
                       <span style={{ fontSize: 18 }} aria-hidden="true">{pm.icon}</span>
                       <div>
-                        <p style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>{pm.label}</p>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{pm.label}</p>
                         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
                           {pm.sub}
                         </p>
@@ -407,7 +410,7 @@ export default function CheckoutContent() {
               </fieldset>
 
               {payMethod === 'card' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 28 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16, marginBottom: 28 }}>
                   <div style={{ gridColumn: '1 / -1' }}>
                     <label htmlFor="cc-number" style={labelStyle}>Número de tarjeta</label>
                     <input
@@ -510,11 +513,12 @@ export default function CheckoutContent() {
                     background: 'none',
                     border: '1px solid rgba(255,255,255,0.1)',
                     color: 'rgba(255,255,255,0.5)',
-                    padding: '16px 24px',
+                    padding: '16px 20px',
                     fontSize: 14,
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontFamily: 'var(--font-body)',
+                    flexShrink: 0,
                   }}
                 >
                   ← ATRÁS
@@ -528,11 +532,11 @@ export default function CheckoutContent() {
                     color: '#000',
                     border: 'none',
                     padding: '16px',
-                    fontSize: 15,
+                    fontSize: isMobile ? 13 : 15,
                     fontWeight: 800,
                     cursor: loading ? 'wait' : 'pointer',
                     fontFamily: 'var(--font-body)',
-                    letterSpacing: '0.06em',
+                    letterSpacing: '0.04em',
                     opacity: loading ? 0.7 : 1,
                     transition: 'opacity 0.2s',
                   }}
@@ -540,7 +544,7 @@ export default function CheckoutContent() {
                   {loading
                     ? 'PROCESANDO...'
                     : payMethod === 'whatsapp'
-                    ? `CONFIRMAR POR WHATSAPP $${cartTotal} →`
+                    ? `CONFIRMAR WS $${cartTotal} →`
                     : `PAGAR $${cartTotal} MXN →`}
                 </button>
               </div>
@@ -554,8 +558,8 @@ export default function CheckoutContent() {
           style={{
             background: '#0a0a0a',
             border: '1px solid rgba(255,255,255,0.06)',
-            padding: '28px',
-            position: 'sticky',
+            padding: '24px',
+            position: isMobile ? 'static' : 'sticky',
             top: 80,
           }}
         >

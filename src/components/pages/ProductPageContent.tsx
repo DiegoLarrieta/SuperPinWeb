@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { PRODUCT_DATA } from '@/data/products';
+import { useIsMobile } from '@/hooks/useBreakpoint';
 
 const WA_LINK =
   'https://wa.me/527712325019?text=Hola!%20Me%20interesa%20el%20SuperPin%20';
@@ -20,6 +21,7 @@ export default function ProductPageContent({ productId }: { productId: string })
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const { addToCart, setCartOpen } = useCart();
+  const isMobile = useIsMobile();
 
   if (!product) return null;
 
@@ -38,8 +40,13 @@ export default function ProductPageContent({ productId }: { productId: string })
     <div style={{ background: '#000', minHeight: '100vh', paddingTop: 64 }}>
 
       {/* Hero Product Section */}
-      <section style={{ padding: '60px 40px 80px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'start' }}>
+      <section style={{ padding: isMobile ? '32px 20px 48px' : '60px 40px 80px', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? 32 : 80,
+          alignItems: 'start',
+        }}>
 
           {/* Image column */}
           <div>
@@ -48,7 +55,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                 background: '#0a0a0a',
                 border: '1px solid rgba(255,255,255,0.05)',
                 position: 'relative',
-                height: 480,
+                height: isMobile ? 280 : 480,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -73,7 +80,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                     aria-label="Imagen anterior"
                     style={{
                       position: 'absolute',
-                      left: 16,
+                      left: 12,
                       top: '50%',
                       transform: 'translateY(-50%)',
                       background: 'rgba(0,0,0,0.6)',
@@ -99,7 +106,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                     aria-label="Imagen siguiente"
                     style={{
                       position: 'absolute',
-                      right: 16,
+                      right: 12,
                       top: '50%',
                       transform: 'translateY(-50%)',
                       background: 'rgba(0,0,0,0.6)',
@@ -125,7 +132,7 @@ export default function ProductPageContent({ productId }: { productId: string })
             </div>
             {/* Thumbnails */}
             <div
-              style={{ display: 'flex', gap: 8, marginTop: 12 }}
+              style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}
               role="list"
               aria-label="Miniaturas de imagen"
             >
@@ -137,8 +144,8 @@ export default function ProductPageContent({ productId }: { productId: string })
                   aria-label={`Ver imagen ${i + 1}`}
                   aria-pressed={i === imgIdx}
                   style={{
-                    width: 80,
-                    height: 60,
+                    width: isMobile ? 64 : 80,
+                    height: isMobile ? 48 : 60,
                     background: '#0a0a0a',
                     border: `1px solid ${i === imgIdx ? '#CAFF00' : 'rgba(255,255,255,0.06)'}`,
                     cursor: 'pointer',
@@ -160,7 +167,7 @@ export default function ProductPageContent({ productId }: { productId: string })
           </div>
 
           {/* Info column */}
-          <div style={{ paddingTop: 16 }}>
+          <div style={{ paddingTop: isMobile ? 0 : 16 }}>
             <span
               style={{
                 background: product.badgeColor,
@@ -179,29 +186,29 @@ export default function ProductPageContent({ productId }: { productId: string })
             <h1
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 56,
+                fontSize: isMobile ? 36 : 56,
                 letterSpacing: '0.05em',
                 color: '#fff',
-                margin: '20px 0 8px',
+                margin: '16px 0 8px',
                 lineHeight: 1,
                 textTransform: 'uppercase',
               }}
             >
               {product.name}
             </h1>
-            <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.5)', marginBottom: 24, lineHeight: 1.6 }}>
+            <p style={{ fontSize: isMobile ? 15 : 17, color: 'rgba(255,255,255,0.5)', marginBottom: 20, lineHeight: 1.6 }}>
               {product.tagline}
             </p>
 
             {/* Stars */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
               <span
-                style={{ color: '#CAFF00', fontSize: 18 }}
+                style={{ color: '#CAFF00', fontSize: 16 }}
                 aria-label={`${product.stars} de 5 estrellas`}
               >
                 {'★'.repeat(product.stars)}
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>
+              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
                 {product.reviews} reseñas verificadas
               </span>
             </div>
@@ -209,18 +216,18 @@ export default function ProductPageContent({ productId }: { productId: string })
             {/* Price */}
             <div
               style={{
-                marginBottom: 24,
-                paddingBottom: 24,
+                marginBottom: 20,
+                paddingBottom: 20,
                 borderBottom: '1px solid rgba(255,255,255,0.06)',
               }}
             >
-              <span style={{ fontSize: 42, fontWeight: 800, color: '#CAFF00' }}>
+              <span style={{ fontSize: isMobile ? 36 : 42, fontWeight: 800, color: '#CAFF00' }}>
                 ${product.price}
               </span>
-              <span style={{ fontSize: 16, color: 'rgba(255,255,255,0.4)', marginLeft: 8 }}>
+              <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.4)', marginLeft: 8 }}>
                 MXN
               </span>
-              <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
+              <div style={{ display: 'flex', gap: 16, marginTop: 10, flexWrap: 'wrap' }}>
                 <span style={{ fontSize: 13, color: '#CAFF00', display: 'flex', alignItems: 'center', gap: 6 }}>
                   ✓ Envío GRATIS
                 </span>
@@ -244,7 +251,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                 background: 'rgba(202,255,0,0.04)',
                 border: '1px solid rgba(202,255,0,0.12)',
                 padding: '16px 20px',
-                marginBottom: 28,
+                marginBottom: 24,
               }}
             >
               <p
@@ -277,7 +284,7 @@ export default function ProductPageContent({ productId }: { productId: string })
             {/* Qty + Add */}
             <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
               <div
-                style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.12)', alignItems: 'center' }}
+                style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.12)', alignItems: 'center', flexShrink: 0 }}
                 role="group"
                 aria-label="Cantidad"
               >
@@ -288,7 +295,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                     background: 'none',
                     border: 'none',
                     color: '#fff',
-                    padding: '12px 18px',
+                    padding: '12px 16px',
                     fontSize: 20,
                     cursor: 'pointer',
                     lineHeight: 1,
@@ -300,11 +307,11 @@ export default function ProductPageContent({ productId }: { productId: string })
                   aria-live="polite"
                   aria-atomic="true"
                   style={{
-                    padding: '0 20px',
+                    padding: '0 16px',
                     fontSize: 16,
                     fontWeight: 700,
                     color: '#fff',
-                    minWidth: 48,
+                    minWidth: 40,
                     textAlign: 'center',
                   }}
                 >
@@ -317,7 +324,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                     background: 'none',
                     border: 'none',
                     color: '#fff',
-                    padding: '12px 18px',
+                    padding: '12px 16px',
                     fontSize: 20,
                     cursor: 'pointer',
                     lineHeight: 1,
@@ -333,8 +340,8 @@ export default function ProductPageContent({ productId }: { productId: string })
                   background: '#CAFF00',
                   color: '#000',
                   border: 'none',
-                  padding: '14px 24px',
-                  fontSize: 15,
+                  padding: '14px 16px',
+                  fontSize: isMobile ? 13 : 15,
                   fontWeight: 800,
                   cursor: 'pointer',
                   fontFamily: 'var(--font-body)',
@@ -344,7 +351,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                 onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
-                {added ? '✓ AGREGADO AL CARRITO' : 'AGREGAR AL CARRITO'}
+                {added ? '✓ AGREGADO' : 'AGREGAR AL CARRITO'}
               </button>
             </div>
 
@@ -378,39 +385,39 @@ export default function ProductPageContent({ productId }: { productId: string })
 
       {/* Features */}
       <section
-        style={{ background: '#0a0a0a', padding: '80px 40px' }}
+        style={{ background: '#0a0a0a', padding: isMobile ? '48px 20px' : '80px 40px' }}
         aria-label="Características del producto"
       >
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 40,
+              fontSize: isMobile ? 28 : 40,
               letterSpacing: '0.06em',
               color: '#fff',
-              marginBottom: 48,
+              marginBottom: 36,
               textAlign: 'center',
             }}
           >
             CARACTERÍSTICAS
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 2 }}>
             {product.features.map((f, i) => (
               <div
                 key={i}
                 style={{
                   background: '#0f0f0f',
-                  padding: '36px 28px',
+                  padding: isMobile ? '24px 18px' : '36px 28px',
                   border: '1px solid rgba(255,255,255,0.04)',
                 }}
               >
-                <p style={{ fontSize: 32, marginBottom: 16 }} aria-hidden="true">
+                <p style={{ fontSize: isMobile ? 24 : 32, marginBottom: 12 }} aria-hidden="true">
                   {f.icon}
                 </p>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 10 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
                   {f.title}
                 </h3>
-                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>
+                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>
                   {f.desc}
                 </p>
               </div>
@@ -421,17 +428,17 @@ export default function ProductPageContent({ productId }: { productId: string })
 
       {/* Specs */}
       <section
-        style={{ background: '#000', padding: '80px 40px' }}
+        style={{ background: '#000', padding: isMobile ? '48px 20px' : '80px 40px' }}
         aria-label="Especificaciones técnicas"
       >
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 40,
+              fontSize: isMobile ? 28 : 40,
               letterSpacing: '0.06em',
               color: '#fff',
-              marginBottom: 40,
+              marginBottom: 32,
               textAlign: 'center',
             }}
           >
@@ -444,13 +451,14 @@ export default function ProductPageContent({ productId }: { productId: string })
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  padding: '18px 0',
+                  padding: '16px 0',
                   borderBottom: '1px solid rgba(255,255,255,0.05)',
+                  gap: 16,
                 }}
               >
                 <dt
                   style={{
-                    fontSize: 14,
+                    fontSize: 13,
                     color: 'rgba(255,255,255,0.4)',
                     fontWeight: 600,
                     textTransform: 'uppercase',
@@ -459,7 +467,7 @@ export default function ProductPageContent({ productId }: { productId: string })
                 >
                   {s.label}
                 </dt>
-                <dd style={{ fontSize: 14, color: '#fff', fontWeight: 500 }}>{s.value}</dd>
+                <dd style={{ fontSize: 14, color: '#fff', fontWeight: 500, textAlign: 'right' }}>{s.value}</dd>
               </div>
             ))}
           </dl>
@@ -467,16 +475,16 @@ export default function ProductPageContent({ productId }: { productId: string })
       </section>
 
       {/* Also consider */}
-      <section style={{ background: '#0a0a0a', padding: '60px 40px' }} aria-label="Producto relacionado">
+      <section style={{ background: '#0a0a0a', padding: isMobile ? '40px 20px' : '60px 40px' }} aria-label="Producto relacionado">
         <div
           style={{
             maxWidth: 1100,
             margin: '0 auto',
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 24,
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: 20,
           }}
         >
           <div>
@@ -494,7 +502,7 @@ export default function ProductPageContent({ productId }: { productId: string })
             <h3
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 28,
+                fontSize: isMobile ? 22 : 28,
                 letterSpacing: '0.06em',
                 color: '#fff',
               }}
@@ -520,6 +528,8 @@ export default function ProductPageContent({ productId }: { productId: string })
               transition: 'background 0.2s, color 0.2s',
               textDecoration: 'none',
               display: 'inline-block',
+              width: isMobile ? '100%' : 'auto',
+              textAlign: 'center',
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#CAFF00';

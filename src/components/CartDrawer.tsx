@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
+import { useIsMobile } from '@/hooks/useBreakpoint';
 
 export default function CartDrawer() {
   const { cart, cartOpen, setCartOpen, removeFromCart, cartTotal } = useCart();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   if (!cartOpen) return null;
 
@@ -40,7 +42,7 @@ export default function CartDrawer() {
           right: 0,
           top: 0,
           bottom: 0,
-          width: 400,
+          width: isMobile ? '100%' : 400,
           background: '#0f0f0f',
           borderLeft: '1px solid rgba(202,255,0,0.12)',
           display: 'flex',
