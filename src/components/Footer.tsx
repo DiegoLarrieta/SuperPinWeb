@@ -15,7 +15,12 @@ const PRODUCT_LINKS = [
   { label: 'Cómo Usar', href: '/como-usar' },
 ];
 
-const SUPPORT_ITEMS = ['Envíos', 'Devoluciones', 'Preguntas Frecuentes', 'Privacidad'];
+const SUPPORT_ITEMS = ['Envíos', 'Devoluciones', 'Preguntas Frecuentes'];
+
+const LEGAL_LINKS = [
+  { label: 'Política de Privacidad', href: '/privacidad' },
+  { label: 'Términos y Condiciones', href: '/terminos' },
+];
 
 export default function Footer() {
   const isMobile = useIsMobile();
@@ -32,7 +37,7 @@ export default function Footer() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr',
+            gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr 1fr',
             gap: isMobile ? 32 : 48,
             marginBottom: 40,
           }}
@@ -179,6 +184,43 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+
+          {/* Legal */}
+          <nav aria-label="Legal">
+            <p
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                color: 'rgba(255,255,255,0.3)',
+                textTransform: 'uppercase',
+                marginBottom: 16,
+              }}
+            >
+              Legal
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {LEGAL_LINKS.map(item => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    style={{
+                      display: 'block',
+                      color: 'rgba(255,255,255,0.5)',
+                      fontSize: 14,
+                      padding: '5px 0',
+                      transition: 'color 0.2s',
+                      textDecoration: 'none',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#CAFF00')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
         <div
